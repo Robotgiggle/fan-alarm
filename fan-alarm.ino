@@ -44,6 +44,16 @@ void setup()
 
 void update_led(int display_val)
 {
+  // set am/pm value
+  pm = display_val >= 1200;
+  
+  // convert to 12-hour time
+  if (display_val >= 1300) {
+    display_val -= 1200;
+  } else if (display_val < 100) {
+    display_val += 1200;
+  }
+
   // update LED display
   led_display1.println(display_val);
   led_display1.writeDisplay();
@@ -51,7 +61,7 @@ void update_led(int display_val)
   led_display1.writeDisplay();
 
   // print time to serial monitor
-  sprintf(buffer,"%04d\n",display_val);
+  sprintf(buffer,"%04d %s\n",display_val,pm?"PM":"AM");
   Serial.print(buffer);
 
   // print alarm status to serial monitor
@@ -65,14 +75,17 @@ void loop()
   delay(10);
 
   if (minute()!=minute(time)) {
+    // update time variable
     time = now();
     display_time = minute()+100*hour(time);
 
+    // activate alarm if necessary
     if (display_time == display_alarm) {
       alarm = true;
       digitalWrite(12, HIGH);
     }
 
+    // update displayed time
     if (mode == 0){
       update_led(display_time);
     }
@@ -83,24 +96,28 @@ void loop()
     if (digitalRead(6) == HIGH) {
       pressed = true;
       if (mode == 1) {
+        // increase current minutes by 1
         display_static += 1;
         if (display_static%100 >= 60){
           display_static -= 60;
         }
         update_led(display_static);
       } else if (mode == 2){
+        // increase current hours by 1
         display_static += 100;
         if (display_static >= 2400){
           display_static -= 2400;
         }
         update_led(display_static);
       } else if (mode == 3){
+        // increase alarm minutes by 1
         display_alarm += 1;
         if (display_alarm%100 >= 60){
           display_alarm -= 60;
         }
         update_led(display_alarm);
       } else if (mode == 4){
+        // increase alarm hours by 1
         display_alarm += 100;
         if (display_alarm >= 2400){
           display_alarm -= 2400;
@@ -115,11 +132,13 @@ void loop()
       if (mode == 0) {
         mode = 1;
         display_static = display_time;
+        Serial.print("set time mode enabled\n");
         update_led(display_static);
       } else if (mode == 1){
         mode = 2;
       } else {
         setTime(display_static/100,display_static%100,0,1,1,2022);
+        Serial.print("time set\n");
         mode = 0;
       }
     }
@@ -129,10 +148,12 @@ void loop()
       pressed = true;
       if (mode == 0) {
         mode = 3;
+        Serial.print("set alarm mode enabled\n");
         update_led(display_alarm);
       } else if (mode == 3){
         mode = 4;
       } else {
+        Serial.print("alarm set\n");
         mode = 0;
       }
     }
@@ -148,7 +169,7 @@ void loop()
   }
 
   // am/pm LED
-  if (display_time >= 1200) {
+  if (pm) {
     digitalWrite(2, HIGH);
   } else {
     digitalWrite(2, LOW);
