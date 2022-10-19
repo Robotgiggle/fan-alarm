@@ -1,5 +1,9 @@
-// C++ code
-//
+// TODO:
+// blinking time while editing
+// blinking alarm notification
+// set up motor driver
+// remove or reuse AM/PM led
+
 #include <LiquidCrystal_I2C.h>
 #include <TimeLib.h>
 
