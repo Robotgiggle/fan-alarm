@@ -1,12 +1,12 @@
 // C++ code
 //
-#include <Adafruit_LEDBackpack.h>
+#include <LiquidCrystal_I2C.h>
 #include <TimeLib.h>
 
 time_t time;
 char buffer[5];
 
-int display_time = 0000; // integers for printing to LED display
+int display_time = 0000; // integers for printing to LCD display
 int display_static = 0000;
 int display_alarm = 1200;
 
@@ -16,7 +16,7 @@ bool pressed = false; // assorted booleans
 bool alarm = false;
 bool pm = false;
 
-Adafruit_7segment led_display1 = Adafruit_7segment();
+LiquidCrystal_I2C lcd(0x27,16,2);
 
 void setup()
 {
@@ -25,7 +25,10 @@ void setup()
 
   setTime(0,0,0,1,1,2022); // time setup
 
-  led_display1.begin(112);
+  lcd.init();
+  lcd.backlight();
+  update_led(display_time);
+
   pinMode(2, OUTPUT); // these are for the LEDs
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
@@ -54,11 +57,30 @@ void update_led(int display_val)
     display_val += 1200;
   }
 
-  // update LED display
-  led_display1.println(display_val);
-  led_display1.writeDisplay();
-  led_display1.drawColon(true);
-  led_display1.writeDisplay();
+  // update LCD display
+  lcd.clear();
+  sprintf(buffer,"%02d:%02d",display_val/100,display_val%100);
+  lcd.print(buffer);
+  lcd.print(pm?" PM":" AM");
+  lcd.setCursor(0,1);
+  switch(mode){
+    case 0:
+      break;
+    case 1:
+      lcd.print("Set minutes");
+      break;
+    case 2:
+      lcd.print("Set hours");
+      break;
+    case 3:
+      lcd.print("Set alarm minutes");
+      break;
+    case 4:
+      lcd.print("Set alarm hours");
+      break;
+    default:
+      lcd.print("MODE ERROR");
+  }
 
   // print time to serial monitor
   sprintf(buffer,"%04d %s\n",display_val,pm?"PM":"AM");
@@ -136,6 +158,7 @@ void loop()
         update_led(display_static);
       } else if (mode == 1){
         mode = 2;
+        update_led(display_static);
       } else {
         setTime(display_static/100,display_static%100,0,1,1,2022);
         Serial.print("time set\n");
@@ -152,6 +175,7 @@ void loop()
         update_led(display_alarm);
       } else if (mode == 3){
         mode = 4;
+        update_led(display_static);
       } else {
         Serial.print("alarm set\n");
         mode = 0;
