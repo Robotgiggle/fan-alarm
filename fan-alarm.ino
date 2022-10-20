@@ -1,14 +1,16 @@
 // TODO:
+// dim backlight to save power
 // blinking time while editing
 // blinking alarm notification
 // set up motor driver
-// remove or reuse AM/PM led
+// reuse AM/PM led for alarm
 
 #include <LiquidCrystal_I2C.h>
 #include <TimeLib.h>
 
 time_t time;
 char buffer[5];
+unsigned long millis_now = 0;
 
 int display_time = 0000; // integers for printing to LCD display
 int display_static = 0000;
@@ -98,7 +100,7 @@ void update_led(int display_val)
 
 void loop()
 {
-  delay(10);
+  millis_now = millis();
 
   if (minute()!=minute(time)) {
     // update time variable
@@ -197,11 +199,13 @@ void loop()
   }
 
   // am/pm LED
+  /*
   if (pm) {
     digitalWrite(2, HIGH);
   } else {
     digitalWrite(2, LOW);
   }
+  */
 
   // set-time mode LED
   if (mode == 1 || mode == 2) {
@@ -216,4 +220,7 @@ void loop()
   } else {
     digitalWrite(4, LOW);
   }
+
+  // delay
+  while (millis() < millis_now + 100UL){}
 }
