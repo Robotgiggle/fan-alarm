@@ -3,7 +3,6 @@
 // blinking time while editing
 // blinking alarm notification
 // set up motor driver
-// reuse AM/PM led for alarm
 
 #include <LiquidCrystal_I2C.h>
 #include <TimeLib.h>
@@ -155,7 +154,7 @@ void loop()
     }
 
     // set-time mode button
-    if (digitalRead(5) == HIGH) {
+    else if (digitalRead(5) == HIGH) {
       pressed = true;
       if (mode == 0) {
         mode = 1;
@@ -173,7 +172,7 @@ void loop()
     }
 
     // set-alarm mode button
-    if (digitalRead(7) == HIGH) {
+    else if (digitalRead(7) == HIGH) {
       pressed = true;
       if (mode == 0) {
         mode = 3;
@@ -198,9 +197,8 @@ void loop()
     pressed = 0;
   }
 
-  // am/pm LED
-  /*
-  if (pm) {
+  // alarm LED
+  if (alarm) {
     digitalWrite(2, HIGH);
   } else {
     digitalWrite(2, LOW);
