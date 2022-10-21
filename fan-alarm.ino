@@ -1,5 +1,4 @@
 // TODO:
-// dim backlight to save power
 // blinking time while editing
 // blinking alarm notification
 // set up motor driver
@@ -8,8 +7,9 @@
 #include <TimeLib.h>
 
 time_t time;
-char buffer[5];
+char buffer[8];
 unsigned long millis_now = 0;
+int leap_counter = 0;
 
 int display_time = 0000; // integers for printing to LCD display
 int display_static = 0000;
@@ -31,6 +31,8 @@ void setup()
   setTime(0,0,0,1,1,2022); // time setup
 
   lcd.init();
+  pinMode(9, OUTPUT);
+  analogWrite(9, 30);
   lcd.backlight();
   update_led(display_time);
 
@@ -102,6 +104,13 @@ void loop()
   millis_now = millis();
 
   if (minute()!=minute(time)) {
+    // adjust for desync
+    leap_counter += 1;
+    if (leap_counter >= 10) {
+      leap_counter = 0;
+      adjustTime(-1);
+    }
+    
     // update time variable
     time = now();
     display_time = minute()+100*hour(time);
@@ -203,7 +212,6 @@ void loop()
   } else {
     digitalWrite(2, LOW);
   }
-  */
 
   // set-time mode LED
   if (mode == 1 || mode == 2) {
