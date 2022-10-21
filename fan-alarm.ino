@@ -104,16 +104,16 @@ void loop()
   millis_now = millis();
 
   if (minute()!=minute(time)) {
-    // adjust for desync
-    leap_counter += 1;
-    if (leap_counter >= 6) {
-      leap_counter = 0;
-      adjustTime(-1);
-    }
-    
     // update time variable
     time = now();
     display_time = minute()+100*hour(time);
+
+    // adjust for desync
+    leap_counter += 1;
+    if (leap_counter >= 5) {
+      leap_counter = 0;
+      adjustTime(-1);
+    }
 
     // activate alarm if necessary
     if (display_time == display_alarm) {
