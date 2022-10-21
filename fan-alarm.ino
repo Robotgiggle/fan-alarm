@@ -110,9 +110,9 @@ void loop()
 
     // adjust for desync
     leap_counter += 1;
-    if (leap_counter >= 5) {
+    if (leap_counter >= 11) {
       leap_counter = 0;
-      adjustTime(-1);
+      adjustTime(-2);
     }
 
     // activate alarm if necessary
