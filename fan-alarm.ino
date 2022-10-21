@@ -106,7 +106,7 @@ void loop()
   if (minute()!=minute(time)) {
     // adjust for desync
     leap_counter += 1;
-    if (leap_counter >= 10) {
+    if (leap_counter >= 6) {
       leap_counter = 0;
       adjustTime(-1);
     }
