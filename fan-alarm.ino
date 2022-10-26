@@ -176,6 +176,7 @@ void loop()
       } else {
         setTime(display_static/100,display_static%100,0,1,1,2022);
         Serial.print("time set\n");
+        update_led(display_static);
         mode = 0;
       }
     }
@@ -189,9 +190,10 @@ void loop()
         update_led(display_alarm);
       } else if (mode == 3){
         mode = 4;
-        update_led(display_static);
+        update_led(display_alarm);
       } else {
         Serial.print("alarm set\n");
+        update_led(display_alarm);
         mode = 0;
       }
     }
@@ -206,11 +208,13 @@ void loop()
     pressed = 0;
   }
 
-  // alarm LED
+  // alarm LED + motor
   if (alarm) {
     digitalWrite(2, HIGH);
+    digitalWrite(12, HIGH);
   } else {
     digitalWrite(2, LOW);
+    digitalWrite(12, LOW);
   }
 
   // set-time mode LED
