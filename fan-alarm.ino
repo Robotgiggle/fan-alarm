@@ -176,8 +176,8 @@ void loop()
       } else {
         setTime(display_static/100,display_static%100,0,1,1,2022);
         Serial.print("time set\n");
-        update_led(display_static);
         mode = 0;
+        update_led(display_time);
       }
     }
 
@@ -193,8 +193,8 @@ void loop()
         update_led(display_alarm);
       } else {
         Serial.print("alarm set\n");
-        update_led(display_alarm);
         mode = 0;
+        update_led(display_time);
       }
     }
 
