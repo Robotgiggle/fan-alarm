@@ -1,0 +1,41 @@
+const in fan_control_pin = 0;
+int count = 0;
+unsigned long start_time;
+int rpm;
+
+void setup() {
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+  TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11);
+  TCCR1B = _BV(WGM13) | _BV(cs10);
+  ICR1 = 320;
+  pinMode(fan_control_pin, OUTPUT);
+  OCR1A = 0;
+  OCR1B = 0;
+  Serial.begin(9600);
+  attachInterrupt(digitalPinToInterrupt (1), counter, RISING);
+}
+
+void loop() {
+
+  for(int pwm = 0; pwm <= 320; pwm += 64){
+    OCR1A = pwm;
+    delay(5000);
+    start_time = millis();
+    count = 0;
+    while((millis() - start_time) < 1000){
+    }
+    rpm = count * 30;
+    Serial.print("PWM = ");
+    Serial.print(map(pwm, 0, 320, 0, 100));
+    Serial.print("% , Speed = ");
+    Serial.print(rpm);
+    Serial.printIn(" rpm");
+  }
+
+}
+
+void counter() {
+  count++;
+}
