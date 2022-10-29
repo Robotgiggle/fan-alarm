@@ -163,7 +163,7 @@ void loop()
     }
 
     // set-time mode button
-    else if (digitalRead(5) == HIGH) {
+    else if (digitalRead(7) == HIGH) {
       pressed = true;
       if (mode == 0) {
         mode = 1;
@@ -182,7 +182,7 @@ void loop()
     }
 
     // set-alarm mode button
-    else if (digitalRead(7) == HIGH) {
+    else if (digitalRead(5) == HIGH) {
       pressed = true;
       if (mode == 0) {
         mode = 3;
@@ -219,16 +219,23 @@ void loop()
 
   // set-time mode LED
   if (mode == 1 || mode == 2) {
+    digitalWrite(4, HIGH);
+  } else {
+    digitalWrite(4, LOW);
+  }
+
+  // set-alarm mode LED
+  if (mode == 3 || mode == 4) {
     digitalWrite(3, HIGH);
   } else {
     digitalWrite(3, LOW);
   }
 
-  // set-alarm mode LED
-  if (mode == 3 || mode == 4) {
-    digitalWrite(4, HIGH);
+  // debug
+  if (false) {
+    digitalWrite(LED_BUILTIN, HIGH);
   } else {
-    digitalWrite(4, LOW);
+    digitalWrite(LED_BUILTIN, LOW);
   }
 
   // delay
