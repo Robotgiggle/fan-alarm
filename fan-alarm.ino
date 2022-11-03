@@ -20,7 +20,7 @@ int mode = 0; // device mode: 0=normal, 1=set_mins, 2=set_hours, 3=alarm_mins, 4
 
 bool pressed = false; // assorted booleans
 bool alarm = false;
-bool lit = false;
+bool lit = true;
 bool pm = false;
 
 LiquidCrystal_I2C lcd(0x27,16,2);
