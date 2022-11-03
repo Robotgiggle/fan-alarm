@@ -140,6 +140,7 @@ void loop()
     if (digitalRead(6) == HIGH) {
       pressed = true;
       lit = true;
+      shutdown_counter = 0;
       if (mode == 1) {
         // increase current minutes by 1
         display_static += 1;
@@ -175,6 +176,7 @@ void loop()
     else if (digitalRead(7) == HIGH) {
       pressed = true;
       lit = true;
+      shutdown_counter = 0;
       if (mode == 0) {
         mode = 1;
         display_static = display_time;
@@ -195,6 +197,7 @@ void loop()
     else if (digitalRead(5) == HIGH) {
       pressed = true;
       lit = true;
+      shutdown_counter = 0;
       if (mode == 0) {
         mode = 3;
         Serial.print("set alarm mode enabled\n");
@@ -224,6 +227,7 @@ void loop()
     digitalWrite(2, HIGH);
     digitalWrite(12, HIGH);
     lit = true;
+    shutdown_counter = 0;
   } else {
     digitalWrite(2, LOW);
     digitalWrite(12, LOW);
