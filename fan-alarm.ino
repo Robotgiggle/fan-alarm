@@ -10,6 +10,7 @@ time_t time;
 char buffer[8];
 unsigned long millis_now = 0;
 int leap_counter = 0;
+int shutdown_counter = 0;
 
 int display_time = 0000; // integers for printing to LCD display
 int display_static = 0000;
@@ -19,6 +20,7 @@ int mode = 0; // device mode: 0=normal, 1=set_mins, 2=set_hours, 3=alarm_mins, 4
 
 bool pressed = false; // assorted booleans
 bool alarm = false;
+bool lit = false;
 bool pm = false;
 
 LiquidCrystal_I2C lcd(0x27,16,2);
@@ -104,6 +106,12 @@ void loop()
   millis_now = millis();
 
   if (minute()!=minute(time)) {
+    shutdown_counter += 1;
+    if (shutdown_counter >= 5){
+      lit = false;
+      shutdown_counter = 0;
+    }
+    
     // update time variable
     time = now();
     display_time = minute()+100*hour(time);
@@ -131,6 +139,7 @@ void loop()
     // increment button
     if (digitalRead(6) == HIGH) {
       pressed = true;
+      lit = true;
       if (mode == 1) {
         // increase current minutes by 1
         display_static += 1;
@@ -165,6 +174,7 @@ void loop()
     // set-time mode button
     else if (digitalRead(7) == HIGH) {
       pressed = true;
+      lit = true;
       if (mode == 0) {
         mode = 1;
         display_static = display_time;
@@ -184,6 +194,7 @@ void loop()
     // set-alarm mode button
     else if (digitalRead(5) == HIGH) {
       pressed = true;
+      lit = true;
       if (mode == 0) {
         mode = 3;
         Serial.print("set alarm mode enabled\n");
@@ -212,6 +223,7 @@ void loop()
   if (alarm) {
     digitalWrite(2, HIGH);
     digitalWrite(12, HIGH);
+    lit = true;
   } else {
     digitalWrite(2, LOW);
     digitalWrite(12, LOW);
@@ -229,6 +241,13 @@ void loop()
     digitalWrite(3, HIGH);
   } else {
     digitalWrite(3, LOW);
+  }
+
+  // backlight shutdown
+  if (lit) {
+    lcd.backlight();
+  } else {
+    lcd.noBacklight();
   }
 
   // debug
