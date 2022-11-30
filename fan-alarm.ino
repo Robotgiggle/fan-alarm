@@ -1,7 +1,6 @@
 // TODO:
 // blinking time while editing
 // blinking alarm notification
-// set up motor driver
 
 #include <LiquidCrystal_I2C.h>
 #include <TimeLib.h>
